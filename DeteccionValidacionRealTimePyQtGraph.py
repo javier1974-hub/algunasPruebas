@@ -34,6 +34,22 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ser.flush()
 
         self.graphWidget = pg.PlotWidget()
+        #self.graphWidget.setLabel('left', 'Value', units='V')
+
+        plotItem = self.graphWidget.getPlotItem()
+
+        #axBottom = plotItem.getAxis('bottom')  # get x axis
+        #xTicks = [0.2, 0.04]
+        #axBottom.setTickSpacing(xTicks[0], xTicks[1])  # set x ticks (major and minor)
+
+
+        #axLeft = plotItem.getAxis('left')  # get y axis
+        #yTicks = [20000, 4000]
+        #axLeft.setTickSpacing(yTicks[0], yTicks[1])  # set y ticks (major and minor)
+
+
+        plotItem.showGrid(x=True, y=True, alpha=0.8)
+
 
         self.setCentralWidget(self.graphWidget)
 
@@ -48,6 +64,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.R_uart = np.zeros(k)
 
         self.graphWidget.setBackground('k')
+
 
         pen = pg.mkPen(color='r')
         self.data_line = self.graphWidget.plot(self.x, self.y, pen=pen)

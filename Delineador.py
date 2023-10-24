@@ -6,28 +6,41 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import plotly.express as px
 import wfdb
+import ecg_plot
+from scipy.spatial import distance
 
 #signal = np.genfromtxt('.\sujeto104_5.csv',dtype = float, delimiter =',')
 
 #signal, fields = wfdb.rdsamp('sample-data/s0010_re', channels=[0], sampfrom=0, sampto='end')
 #signals2, fields2 = wfdb.rdsamp('s0010_re', channels=[14, 0, 5, 10], sampfrom=100, sampto=15000, pn_dir='ptbdb/patient001/')
 #signal, fields2 = wfdb.rdsamp('s0014lre', channels=[0], pn_dir='ptbdb/patient001/')
-signal, fields2 = wfdb.rdsamp('sel100', channels=[1], pn_dir='qtdb/')
-signal = np.squeeze(signal)
+# signal, fields2 = wfdb.rdsamp('sel100', channels=[1], pn_dir='qtdb/')
+# signal = np.squeeze(signal)
 
 # lee QTDB con WFDB
 
-# inicio_anotaciones=150000
-# fin_anotaciones = 156000
-# signals2, fields2 = wfdb.rdsamp('.\sel100', channels=[0,1], sampfrom=inicio_anotaciones, sampto=fin_anotaciones)
-# annotation = wfdb.rdann('.\sel100', 'q1c', sampfrom=inicio_anotaciones, sampto=fin_anotaciones)
+inicio_anotaciones=150000
+fin_anotaciones = 156000
+signals2, fields2 = wfdb.rdsamp('.\sel31', channels=[0,1], sampfrom=inicio_anotaciones, sampto=fin_anotaciones)
+annotation = wfdb.rdann('.\sel31', 'q1c', sampfrom=inicio_anotaciones, sampto=fin_anotaciones)
+#atribute = wfdb.rdann('.\sel102', 'atr', sampfrom=inicio_anotaciones, sampto=fin_anotaciones)
 #
 # print(signals2)
 # print(fields2)
 #
+
+#ecg_plot.plot_1(signals2[0:250,0], sample_rate=250, title='Malignant Ventricular Fibrillation')
+#ecg_plot.plot_1(signals2[0:250,1], sample_rate=250, title='')
+#ecg_plot.show()
+
+distancia = distance.euclidean(signals2[0:250,0],signals2[250:500,0])
+
+print(distancia)
+
 # fig = go.Figure()
 # t=np.linspace(1,len(signals2), len(signals2))
-# fig.add_trace(go.Scatter(x=t, y= signals2[:,0], mode='lines',name='lines'))
+# fig.add_trace(go.Scatter(x=t, y= signals2[:,0], mode='lines',name='ch0'))
+# fig.add_trace(go.Scatter(x=t, y= signals2[:,1], mode='lines',name='ch1'))
 # fig.add_trace(go.Scatter(x=annotation.sample-inicio_anotaciones, y=signals2[:,0][annotation.sample-inicio_anotaciones], mode='text+markers', text = annotation.symbol))
 # fig.show()
 
