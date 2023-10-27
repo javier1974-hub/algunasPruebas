@@ -28,18 +28,6 @@ factor = 2000
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -76,13 +64,13 @@ class MainWindow(QWidget):
         #self.p1.setBackground('k')
         self.p1.showGrid(x=True, y=True, alpha=0.8)
 
+
         pen = pg.mkPen(color='r', width=2)
         self.data_line = self.p1.plot(self.x, self.y, pen=pen)
         pen1 = pg.mkPen(color='g', width=3)
         self.data_line1 = self.p1.plot(self.x, self.R, pen=pen1)
 
         self.bpm= QLabel("",self)
-
 
         self.button_Connect = QPushButton("Connect",self)
         self.button_Connect.clicked.connect(self.buttonConnectClicked)
@@ -129,7 +117,7 @@ class MainWindow(QWidget):
 
     def buttonDisconnectClicked(self):
 
-
+        self.ser.close()
         # self.file_name, ok = QFileDialog.getOpenFileName(self,"Open File", "","csv (*.csv) ")
         #
         # self.worker = Worker(self.file_name, self.pcg)
@@ -146,32 +134,33 @@ class MainWindow(QWidget):
     def update_plot_data(self):
         global k, i, N, cont
 
-        while i < k:
-            inicio_dato = self.ser.read(1)
-            if inicio_dato == b'\x24':
-                dato_uart_byte = self.ser.read(5)
-                fin_dato = self.ser.read(1)
-                if fin_dato == b'\x23':
-                    self.y_uart[i] = int.from_bytes(dato_uart_byte[0:4], byteorder='big', signed=True)
-                    self.R_uart[i] = int.from_bytes(dato_uart_byte[4:], byteorder='big', signed=True)
-                    i = i + 1
-                # else:
-                # fin_dato = ser.read(1)
+        if self.ser.is_open == True:
+            while i < k:
+                inicio_dato = self.ser.read(1)
+                if inicio_dato == b'\x24':
+                    dato_uart_byte = self.ser.read(5)
+                    fin_dato = self.ser.read(1)
+                    if fin_dato == b'\x23':
+                        self.y_uart[i] = int.from_bytes(dato_uart_byte[0:4], byteorder='big', signed=True)
+                        self.R_uart[i] = int.from_bytes(dato_uart_byte[4:], byteorder='big', signed=True)
+                        i = i + 1
+                    # else:
+                    # fin_dato = ser.read(1)
+                else:
+                    pass
             else:
-                pass
-        else:
-            i = 0
+                i = 0
 
-        self.x[:] = np.linspace((N * k), (n + (N * k)) - 1, n)
-        self.y[:-k] = self.y[k:]      # primero corro k a la izquierda
-        self.R[:-k] = self.R[k:]
-        self.y[-k:] = self.y_uart[:]  + offset # luego agrego los nuevos k valores a graficar
-        self.R[-k:] = self.R_uart[:] * factor
+            self.x[:] = np.linspace((N * k), (n + (N * k)) - 1, n)
+            self.y[:-k] = self.y[k:]      # primero corro k a la izquierda
+            self.R[:-k] = self.R[k:]
+            self.y[-k:] = self.y_uart[:]  + offset # luego agrego los nuevos k valores a graficar
+            self.R[-k:] = self.R_uart[:] * factor
 
-        self.data_line.setData(self.x,self.y)  # Update the data.
-        self.data_line1.setData(self.x,(-1)*self.R+14000)  # Update the data.
+            self.data_line.setData(self.x,self.y)  # Update the data.
+            self.data_line1.setData(self.x,(-1)*self.R+14000)  # Update the data.
 
-        N = N + 1
+            N = N + 1
 
 
     def graficar(self,data):
