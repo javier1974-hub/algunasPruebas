@@ -14,7 +14,7 @@ cont = 0
 N = 0
 
 offset = 56500
-factor = 10000
+factor = 2000
 
 class MainWindow(QtWidgets.QMainWindow):
 
@@ -66,9 +66,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.graphWidget.setBackground('k')
 
 
-        pen = pg.mkPen(color='r')
+        pen = pg.mkPen(color='r', width=2)
         self.data_line = self.graphWidget.plot(self.x, self.y, pen=pen)
-        pen1 = pg.mkPen(color='g')
+        pen1 = pg.mkPen(color='g', width=3)
         self.data_line1 = self.graphWidget.plot(self.x, self.R, pen=pen1)
 
         self.timer = QtCore.QTimer()
@@ -102,7 +102,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.R[-k:] = self.R_uart[:] * factor
 
         self.data_line.setData(self.x,self.y)  # Update the data.
-        self.data_line1.setData(self.x,self.R)  # Update the data.
+        self.data_line1.setData(self.x,(-1)*self.R+14000)  # Update the data.
 
         N = N + 1
 
