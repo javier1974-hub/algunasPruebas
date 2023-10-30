@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import (QApplication, QWidget, QLabel,
 QLineEdit, QCheckBox, QTextEdit, QGridLayout,QPushButton,QFileDialog, QTableWidget, QTableWidgetItem,QProgressBar)
-from PyQt6 import QtCore
+from PyQt6 import QtGui,QtCore
 from PyQt6.QtCore import pyqtSignal, QThread
 import pyqtgraph as pg
 import sys  # We need sys so that we can pass argv to QApplication
@@ -42,6 +42,14 @@ class MainWindow(QWidget):
         # customize the averaged curve that can be activated from the context menu:
         self.p1.avgPen = pg.mkPen('#FFFFFF')
         self.p1.avgShadowPen = pg.mkPen('#8080DD', width=10)
+
+        font = QtGui.QFont()
+        font.setPixelSize(120)
+        self.text = pg.TextItem('', color='g')
+        self.text.setFont(font)
+        self.text.setText(str(0))
+        self.p1.addItem(self.text)
+        self.text.setPos(500, 800)
 
         self.x = np.zeros((n), dtype=np.float32)
         self.y = np.zeros((n), dtype=np.float32)
@@ -116,7 +124,6 @@ class MainWindow(QWidget):
         # self.worker.start()
         #
         # self.worker.finished.connect(self.graficar)
-
         pass
 
 
@@ -151,6 +158,9 @@ class MainWindow(QWidget):
 
             N = N + 1
 
+            self.text.setPos(500, 800)
+            self.text.setText(str(10 / 2))
+
 
     def graficar(self,data):
         self.pcg = data
@@ -160,14 +170,12 @@ class MainWindow(QWidget):
         self.p1.showGrid(x=True, y=True, alpha=0.3)
         # self.p1.plot(data2, pen="g")
 
-        p2d = self.p2.plot(self.pcg, pen="w")
-        # bound the LinearRegionItem to the plotted data
-        self.region.setClipItem(p2d)
 
-        self.region.sigRegionChanged.connect(self.update)
-        self.p1.sigRangeChanged.connect(self.updateRegion)
 
-        self.region.setRegion([0, 1024])
+        # self.text = pg.TextItem(str(self.x_dl_5g_flag))
+        # self.plt_1.addItem(self.text)
+        # self.text.setPos(30, 20)
+
 
         # cross hair
         self.vLine = pg.InfiniteLine(angle=90, movable=False)
@@ -179,7 +187,7 @@ class MainWindow(QWidget):
         self.p1.scene().sigMouseMoved.connect(self.mouseMoved)
         self.p1.scene().sigMouseClicked.connect(self.mouseClicked)
 
-        self.button_Segment.setEnabled(True)
+
 
 
 
