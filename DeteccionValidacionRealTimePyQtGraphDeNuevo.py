@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import (QApplication, QWidget, QLabel,
 QLineEdit, QCheckBox, QTextEdit, QGridLayout,QPushButton,QFileDialog, QTableWidget, QTableWidgetItem,QProgressBar)
-from PyQt6 import QtGui,QtCore
+from PyQt6 import QtGui, QtCore
+from PyQt6.QtCore import Qt
 from PyQt6.QtCore import pyqtSignal, QThread
 import pyqtgraph as pg
 import sys  # We need sys so that we can pass argv to QApplication
@@ -16,7 +17,6 @@ N = 0
 
 offset = 56500
 factor = 2000
-
 
 
 class MainWindow(QWidget):
@@ -35,21 +35,21 @@ class MainWindow(QWidget):
     def setUpMainWindow(self):
 
         self.win = pg.GraphicsLayoutWidget(show=True)
-        self.label = pg.LabelItem(justify='right')
-        self.win.addItem(self.label)
+        # self.label = pg.LabelItem(justify='right')
+        # self.win.addItem(self.label)
 
         self.p1 =self.win.addPlot(row=0, col=0)
         # customize the averaged curve that can be activated from the context menu:
         self.p1.avgPen = pg.mkPen('#FFFFFF')
         self.p1.avgShadowPen = pg.mkPen('#8080DD', width=10)
 
-        font = QtGui.QFont()
-        font.setPixelSize(120)
-        self.text = pg.TextItem('', color='g')
-        self.text.setFont(font)
-        self.text.setText(str(0))
-        self.p1.addItem(self.text)
-        self.text.setPos(500, 800)
+        # font = QtGui.QFont()
+        # font.setPixelSize(120)
+        # self.text = pg.TextItem('', color='g')
+        # self.text.setFont(font)
+        # self.text.setText(str(0))
+        # self.win.addItem(self.text)
+        # self.text.setPos(500, 800)
 
         self.x = np.zeros((n), dtype=np.float32)
         self.y = np.zeros((n), dtype=np.float32)
@@ -69,7 +69,11 @@ class MainWindow(QWidget):
         pen1 = pg.mkPen(color='g', width=3)
         self.data_line1 = self.p1.plot(self.x, self.R, pen=pen1)
 
-        self.bpm= QLabel("",self)
+        self.bpm = QLabel("",self)
+        self.bpm.setStyleSheet("color: rgb(0,128,0)")
+        self.bpm.setFont(QtGui.QFont('Arial', 40))
+        #self.bpm.setAlignment(QtCore.Qt.AlignCenter)
+
 
         self.button_Connect = QPushButton("Connect",self)
         self.button_Connect.clicked.connect(self.buttonConnectClicked)
@@ -86,10 +90,10 @@ class MainWindow(QWidget):
         # self.items_grid.addWidget(self.bpm, 3, 0, 1, 1)
 
         self.items_grid = QGridLayout()
-        self.items_grid.addWidget(self.win , 0, 0, 9, 2)
+        self.items_grid.addWidget(self.win , 1, 0, 9, 2)
         self.items_grid.addWidget(self.button_Connect, 10, 0, 1, 1)
         self.items_grid.addWidget(self.button_Disconnect, 10, 1, 1, 1)
-        self.items_grid.addWidget(self.bpm, 3, 0, 1, 1)
+        self.items_grid.addWidget(self.bpm, 0, 0, 1, 2)
 
         self.setLayout(self.items_grid)
 
@@ -106,6 +110,7 @@ class MainWindow(QWidget):
             print(self.ser, "\n")  # print serial parameters
 
         self.ser.flush()
+
 
         self.timer = QtCore.QTimer()
         self.timer.setInterval(10)
@@ -139,8 +144,13 @@ class MainWindow(QWidget):
                     if fin_dato == b'\x23':
                         self.y_uart[i] = int.from_bytes(dato_uart_byte[0:4], byteorder='big', signed=True)
                         self.R_uart[i] = int.from_bytes(dato_uart_byte[4:], byteorder='big', signed=True)
-                        i = i + 1
                         cont_bpm = cont_bpm + 1
+                        print([self.R_uart[i], cont_bpm])
+                        if self.R_uart[i] == 1:
+                            self.bpm.setText(str(int(60000 / cont_bpm)))
+                            cont_bpm = 0
+
+                        i = i + 1
 
                 else:
                     pass
@@ -158,8 +168,10 @@ class MainWindow(QWidget):
 
             N = N + 1
 
-            self.text.setPos(500, 800)
-            self.text.setText(str(10 / 2))
+
+            #print(str(60000/cont_bpm))
+
+
 
 
     def graficar(self,data):
