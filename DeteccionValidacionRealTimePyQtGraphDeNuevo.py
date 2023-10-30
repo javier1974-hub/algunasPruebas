@@ -1,26 +1,17 @@
-import numpy as np
 from PyQt6.QtWidgets import (QApplication, QWidget, QLabel,
 QLineEdit, QCheckBox, QTextEdit, QGridLayout,QPushButton,QFileDialog, QTableWidget, QTableWidgetItem,QProgressBar)
 from PyQt6 import QtCore
-from pyqtgraph import PlotWidget, plot
 from PyQt6.QtCore import pyqtSignal, QThread
 import pyqtgraph as pg
 import sys  # We need sys so that we can pass argv to QApplication
-from time import sleep
-import os
-from PyQt6.QtCore import *
-from PyQt6.QtGui import *
 import numpy as np
-import os
-import random
-import itertools
 import serial
 
 
 i = 0
 k = 100
 n = 5000
-cont = 0
+cont_bpm = 0
 N = 0
 
 offset = 56500
@@ -37,7 +28,7 @@ class MainWindow(QWidget):
     def initializeUI(self):
         """Set up the application's GUI."""
         self.setMinimumSize(1000, 800)
-        self.setWindowTitle('Segmentacion de PCG')
+        self.setWindowTitle('Sincronizador Validacion Deteccion')
         self.setUpMainWindow()
         self.show()
 
@@ -92,9 +83,7 @@ class MainWindow(QWidget):
         self.items_grid.addWidget(self.button_Disconnect, 10, 1, 1, 1)
         self.items_grid.addWidget(self.bpm, 3, 0, 1, 1)
 
-
         self.setLayout(self.items_grid)
-
 
 
     def buttonConnectClicked(self, evt):
@@ -132,7 +121,7 @@ class MainWindow(QWidget):
 
 
     def update_plot_data(self):
-        global k, i, N, cont
+        global k, i, N, cont_bpm
 
         if self.ser.is_open == True:
             while i < k:
@@ -144,8 +133,8 @@ class MainWindow(QWidget):
                         self.y_uart[i] = int.from_bytes(dato_uart_byte[0:4], byteorder='big', signed=True)
                         self.R_uart[i] = int.from_bytes(dato_uart_byte[4:], byteorder='big', signed=True)
                         i = i + 1
-                    # else:
-                    # fin_dato = ser.read(1)
+                        cont_bpm = cont_bpm + 1
+
                 else:
                     pass
             else:
