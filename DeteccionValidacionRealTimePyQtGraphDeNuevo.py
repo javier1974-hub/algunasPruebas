@@ -7,6 +7,8 @@ import pyqtgraph as pg
 import sys  # We need sys so that we can pass argv to QApplication
 import numpy as np
 import serial
+import serial.tools.list_ports
+
 
 
 i = 0
@@ -17,6 +19,13 @@ N = 0
 
 offset = 56500
 factor = 2000
+
+
+ports = serial.tools.list_ports.comports()
+
+for port, desc, hwid in sorted(ports):
+        print("{}: {} [{}]".format(port, desc, hwid))
+
 
 
 class MainWindow(QWidget):
