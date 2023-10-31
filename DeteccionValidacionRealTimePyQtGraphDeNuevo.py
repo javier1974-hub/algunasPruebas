@@ -71,8 +71,8 @@ class MainWindow(QWidget):
 
         self.bpm = QLabel("",self)
         self.bpm.setStyleSheet("color: rgb(0,128,0)")
-        self.bpm.setFont(QtGui.QFont('Arial', 40))
-        #self.bpm.setAlignment(QtCore.Qt.AlignCenter)
+        self.bpm.setFont(QtGui.QFont('Arial', 60))
+        self.bpm.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
 
         self.button_Connect = QPushButton("Connect",self)
@@ -81,14 +81,6 @@ class MainWindow(QWidget):
         self.button_Disconnect.clicked.connect(self.buttonDisconnectClicked)
 
 
-        #self.table = QTableWidget(4,2)
-
-        # self.items_grid = QGridLayout()
-        # self.items_grid.addWidget(self.win , 0, 1, 5,1)
-        # self.items_grid.addWidget(self.button_Connect, 0, 0, 1,1)
-        # self.items_grid.addWidget(self.button_Disconnect, 2, 0, 1, 1)
-        # self.items_grid.addWidget(self.bpm, 3, 0, 1, 1)
-
         self.items_grid = QGridLayout()
         self.items_grid.addWidget(self.win , 1, 0, 9, 2)
         self.items_grid.addWidget(self.button_Connect, 10, 0, 1, 1)
@@ -96,7 +88,7 @@ class MainWindow(QWidget):
         self.items_grid.addWidget(self.bpm, 0, 0, 1, 2)
 
         self.setLayout(self.items_grid)
-
+     
 
     def buttonConnectClicked(self, evt):
         # initialize serial port
@@ -121,13 +113,9 @@ class MainWindow(QWidget):
 
         self.ser.close()
         # self.file_name, ok = QFileDialog.getOpenFileName(self,"Open File", "","csv (*.csv) ")
-        #
         # self.worker = Worker(self.file_name, self.pcg)
-        #
         # self.worker.progress.connect(self.updateProgressBar)
-        #
         # self.worker.start()
-        #
         # self.worker.finished.connect(self.graficar)
         pass
 
@@ -145,7 +133,7 @@ class MainWindow(QWidget):
                         self.y_uart[i] = int.from_bytes(dato_uart_byte[0:4], byteorder='big', signed=True)
                         self.R_uart[i] = int.from_bytes(dato_uart_byte[4:], byteorder='big', signed=True)
                         cont_bpm = cont_bpm + 1
-                        print([self.R_uart[i], cont_bpm])
+                        #print([self.R_uart[i], cont_bpm])
                         if self.R_uart[i] == 1:
                             self.bpm.setText(str(int(60000 / cont_bpm)))
                             cont_bpm = 0
@@ -158,9 +146,9 @@ class MainWindow(QWidget):
                 i = 0
 
             self.x[:] = np.linspace((N * k), (n + (N * k)) - 1, n)
-            self.y[:-k] = self.y[k:]      # primero corro k a la izquierda
+            self.y[:-k] = self.y[k:]   # primero corro k a la izquierda
             self.R[:-k] = self.R[k:]
-            self.y[-k:] = self.y_uart[:]  + offset # luego agrego los nuevos k valores a graficar
+            self.y[-k:] = self.y_uart[:] + offset # luego agrego los nuevos k valores a graficar
             self.R[-k:] = self.R_uart[:] * factor
 
             self.data_line.setData(self.x,self.y)  # Update the data.
@@ -168,10 +156,7 @@ class MainWindow(QWidget):
 
             N = N + 1
 
-
             #print(str(60000/cont_bpm))
-
-
 
 
     def graficar(self,data):
@@ -181,7 +166,6 @@ class MainWindow(QWidget):
         self.p1.plot(self.pcg, pen="r", symbol='o', symbolSize=5, symbolBrush="r")
         self.p1.showGrid(x=True, y=True, alpha=0.3)
         # self.p1.plot(data2, pen="g")
-
 
 
         # self.text = pg.TextItem(str(self.x_dl_5g_flag))
@@ -198,8 +182,6 @@ class MainWindow(QWidget):
         self.vb = self.p1.vb
         self.p1.scene().sigMouseMoved.connect(self.mouseMoved)
         self.p1.scene().sigMouseClicked.connect(self.mouseClicked)
-
-
 
 
 
