@@ -27,7 +27,6 @@ for port, desc, hwid in sorted(ports):
         print("{}: {} [{}]".format(port, desc, hwid))
 
 
-
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
