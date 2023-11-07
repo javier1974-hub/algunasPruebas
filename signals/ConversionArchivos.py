@@ -15,17 +15,12 @@ fileList = os.listdir(path_signal)
 print(fileList)
 for file in fileList:
     data = np.genfromtxt(path_signal + file, delimiter=",")
-    data=np.transpose(data)
-    #np.savetxt(path_signal_c + file, [data], delimiter=",")  # no anda
-    np.savetxt(path_signal_c + file, data, delimiter=",\n")      #tampoco anda
-    #np.savetxt(path_signal_c + file, data, delimiter=",", newline="\n")
+    np.savetxt(path_signal_c + file, data, fmt='%.18e,')
 
-# fileList = os.listdir(path_masks)
-# print(fileList)
-# for file in fileList:
-#     data = np.genfromtxt(path_masks + file, delimiter=",")
-#     data=np.transpose(data)
-#     #np.savetxt(path_c + file, [data], delimiter=",")   no anda
-#     #np.savetxt(path_c + file, data, newline=",")      tampoco anda
-#     np.savetxt(path_masks_c + file, data, delimiter=",", newline="\n")
-#
+fileList = os.listdir(path_masks)
+print(fileList)
+for file in fileList:
+    data = np.genfromtxt(path_masks + file, delimiter=",")
+    data=np.transpose(data)
+    np.savetxt(path_masks_c + file, data, fmt='%.18e,')
+
